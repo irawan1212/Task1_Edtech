@@ -6,6 +6,7 @@ class AppTheme {
   static const Color backgroundColor = Colors.white;
 
   static TextStyle headingStyle({
+    
     double size = 24,
     FontWeight weight = FontWeight.bold,
     Color color = secondaryColor,

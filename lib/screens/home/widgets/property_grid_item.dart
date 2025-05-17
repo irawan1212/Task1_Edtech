@@ -82,7 +82,7 @@ class PropertyGridItem extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   'Rp${property.price}/bulan',
-                  style: AppTheme.headingStyle(
+                  style: AppTheme.contentStyle(
                     size: 11,
                     color: AppTheme.primaryColor,
                   ),
