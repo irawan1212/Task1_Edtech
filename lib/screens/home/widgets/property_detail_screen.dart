@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/utils/app_theme.dart';
 import 'package:flutter_application_1/screens/home/data/property_data.dart';
+import 'package:flutter_application_1/screens/home/widgets/booking_screen.dart'; 
+import 'package:flutter_application_1/utils/app_theme.dart';
 import 'package:flutter_application_1/screens/home/widgets/facility_item.dart';
 
 class PropertyDetailScreen extends StatelessWidget {
@@ -56,7 +57,6 @@ class PropertyDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-
                   Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -87,15 +87,13 @@ class PropertyDetailScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 16),
                         Row(
                           children: [
                             Text(
-                              'Rp${property.price}/bulan',
+                              property.price, 
                               style: AppTheme.contentStyle(
                                 size: 14,
-                               
                               ),
                             ),
                             const SizedBox(width: 8),
@@ -118,7 +116,6 @@ class PropertyDetailScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 24),
                         Text(
                           'Fasilitas',
@@ -146,7 +143,6 @@ class PropertyDetailScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-
                         const SizedBox(height: 24),
                         Text(
                           'Galeri',
@@ -174,19 +170,16 @@ class PropertyDetailScreen extends StatelessWidget {
                             },
                           ),
                         ),
-
                         const SizedBox(height: 24),
                         Text(
                           'Deskripsi',
-                          style: AppTheme.headingStyle
-                          (size: 16),
+                          style: AppTheme.headingStyle(size: 16),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           property.description,
                           style: AppTheme.contentStyle(size: 14),
                         ),
-
                         const SizedBox(height: 24),
                         Text(
                           'Lokasi',
@@ -219,7 +212,6 @@ class PropertyDetailScreen extends StatelessWidget {
               ),
             ),
           ),
-
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -235,7 +227,14 @@ class PropertyDetailScreen extends StatelessWidget {
             child: SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => BookingScreen(property: property),
+                    ),
+                  );
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.amber,
                   padding: const EdgeInsets.symmetric(vertical: 16),
