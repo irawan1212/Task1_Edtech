@@ -1,34 +1,29 @@
-
-
 class OnboardingData {
   final String image;
-  final String title;
-  final String subtitle;
+  final String titleKey;
+  final String subtitleKey;
 
   OnboardingData({
     required this.image,
-    required this.title,
-    required this.subtitle,
+    required this.titleKey,
+    required this.subtitleKey,
   });
 }
 
 final List<OnboardingData> onboardingPages = [
   OnboardingData(
     image: 'assets/images/image 1.png',
-    title: 'Mulai Hari Produktifmu Sekarang!',
-    subtitle:
-        'Temukan tempat kerja langsung mengakses, pengaruh untuk masa keberhasilan. Define and design space sekarang',
+    titleKey: 'onboarding_title_1',
+    subtitleKey: 'onboarding_subtitle_1',
   ),
   OnboardingData(
     image: 'assets/images/image 6.png',
-    title: 'Ruangmu. Gayamu. Bisnismu.',
-    subtitle:
-        'Menawarkan fleksibilitas dan personalisasi yang disesuaikan oleh UnionSpace',
+    titleKey: 'onboarding_title_2',
+    subtitleKey: 'onboarding_subtitle_2',
   ),
   OnboardingData(
     image: 'assets/images/image 7.png',
-    title: 'Terhubung. Berkembang. Bersama',
-    subtitle:
-        'Memiliki rangkaian keuntungan dan pertumbuhan kolaborasi profesional di Indonesia',
+    titleKey: 'onboarding_title_3',
+    subtitleKey: 'onboarding_subtitle_3',
   ),
 ];

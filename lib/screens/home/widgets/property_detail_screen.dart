@@ -122,7 +122,7 @@ class PropertyDetailScreen extends StatelessWidget {
                           style: AppTheme.headingStyle(size: 16),
                         ),
                         const SizedBox(height: 12),
-                        Row(
+                        const Row(
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: [
                             FacilityItem(

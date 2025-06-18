@@ -1,24 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_application_1/screens/home/data/property_data.dart';
-import 'package:flutter_application_1/utils/app_theme.dart';
-class BookingData {
-  final Property property;
-  final DateTime selectedDate;
-  final String selectedRoom;
-  final String selectedTime;
-  final String selectedDuration;
-  final int totalPrice;
+import 'package:flutter_application_1/screens/Order/order_screen.dart';
+import 'package:flutter_application_1/screens/Auth/login_screen.dart';
+import 'package:flutter_application_1/screens/home/home_screen.dart';
+import 'package:flutter_application_1/main.dart';
 
-  BookingData({
-    required this.property,
-    required this.selectedDate,
-    required this.selectedRoom,
-    required this.selectedTime,
-    required this.selectedDuration,
-    required this.totalPrice,
-  });
-}
 class BookingScreen extends StatefulWidget {
   final Property property;
 
@@ -46,7 +35,7 @@ class _BookingScreenState extends State<BookingScreen> {
     '14:00',
     '15:00',
     '16:00',
-    '17:00'
+    '17:00',
   ];
   final List<String> _durations = ['1', '2', '3', '4', '5', '6', '7', '8'];
 
@@ -85,10 +74,13 @@ class _BookingScreenState extends State<BookingScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           'Pesan',
           style: TextStyle(
-              color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -104,15 +96,14 @@ class _BookingScreenState extends State<BookingScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             'Pilih Tanggal',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 16),
           _buildCalendar(),
-
           const SizedBox(height: 24),
-          Text(
+          const Text(
             'Pilih Ruangan',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
@@ -141,9 +132,8 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Pilih Jam',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
@@ -172,9 +162,8 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 16),
-          Text(
+          const Text(
             'Pilih Durasi',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           ),
@@ -203,7 +192,6 @@ class _BookingScreenState extends State<BookingScreen> {
               ),
             ),
           ),
-
           const SizedBox(height: 32),
           SizedBox(
             width: double.infinity,
@@ -216,7 +204,7 @@ class _BookingScreenState extends State<BookingScreen> {
                   borderRadius: BorderRadius.circular(24),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Lanjutkan Pemesanan',
                 style: TextStyle(
                   color: Colors.white,
@@ -251,19 +239,19 @@ class _BookingScreenState extends State<BookingScreen> {
             children: [
               IconButton(
                 onPressed: _goToPreviousMonth,
-                icon: Icon(Icons.chevron_left),
+                icon: const Icon(Icons.chevron_left),
               ),
               Text(
                 DateFormat('MMMM yyyy').format(_selectedDate),
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
               IconButton(
                 onPressed: _goToNextMonth,
-                icon: Icon(Icons.chevron_right),
+                icon: const Icon(Icons.chevron_right),
               ),
             ],
           ),
-
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -278,7 +266,6 @@ class _BookingScreenState extends State<BookingScreen> {
                     ))
                 .toList(),
           ),
-
           const SizedBox(height: 8),
           ...List.generate(6, (weekIndex) {
             return Row(
@@ -288,7 +275,7 @@ class _BookingScreenState extends State<BookingScreen> {
                     weekIndex * 7 + dayIndex - startingWeekday + 1;
 
                 if (dayNumber < 1 || dayNumber > daysInMonth) {
-                  return Container(width: 32, height: 32);
+                  return SizedBox(width: 32, height: 32);
                 }
 
                 final isSelected = dayNumber == _selectedDate.day;
@@ -330,6 +317,21 @@ class _BookingScreenState extends State<BookingScreen> {
   }
 
   void _continueToBooking() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Silakan login untuk melanjutkan.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -356,14 +358,14 @@ class _BookingScreenState extends State<BookingScreen> {
               color: Colors.amber.shade100,
               shape: BoxShape.circle,
             ),
-            child: Icon(
+            child: const Icon(
               Icons.check,
               color: Colors.amber,
               size: 50,
             ),
           ),
           const SizedBox(height: 24),
-          Text(
+          const Text(
             'Pembayaran Berhasil',
             style: TextStyle(
               fontSize: 20,
@@ -373,10 +375,10 @@ class _BookingScreenState extends State<BookingScreen> {
           const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
-              Navigator.pushReplacement(
+              Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => MyBookingsScreen(),
+                  builder: (context) => const OrderScreen(),
                 ),
               );
             },
@@ -387,7 +389,7 @@ class _BookingScreenState extends State<BookingScreen> {
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
-            child: Text(
+            child: const Text(
               'Lihat Pesanan Saya',
               style: TextStyle(
                 color: Colors.white,
@@ -417,20 +419,86 @@ class BookingDetailScreen extends StatefulWidget {
     required this.selectedDuration,
   });
 
-   @override
+  @override
   _BookingDetailScreenState createState() => _BookingDetailScreenState();
 }
 
 class _BookingDetailScreenState extends State<BookingDetailScreen> {
   bool _isBookingConfirmed = false;
 
-  void _confirmBooking() {
+  void _confirmBooking() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Silakan login untuk melanjutkan.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+      );
+      return;
+    }
+
     setState(() {
       _isBookingConfirmed = true;
     });
+
+    final firestore = FirebaseFirestore.instance;
+    final orderRef = firestore
+        .collection('orders')
+        .doc(user.uid)
+        .collection('user_orders')
+        .doc();
+    final totalPrice = _calculateTotalPrice();
+
+    try {
+      await orderRef.set({
+        'property': {
+          'id': widget.property.id,
+          'name': widget.property.name,
+          'location': widget.property.location,
+          'description': widget.property.description,
+          'imageUrl': widget.property.imageUrl,
+          'price': widget.property.price,
+          'rating': widget.property.rating,
+          'locationId': widget.property.locationId,
+        },
+        'selectedDate': widget.selectedDate.toIso8601String(),
+        'selectedRoom': widget.selectedRoom,
+        'selectedTime': widget.selectedTime,
+        'selectedDuration': widget.selectedDuration,
+        'totalPrice': totalPrice,
+        'createdAt': DateTime.now().toIso8601String(),
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Gagal menyimpan pesanan: $e. Periksa koneksi atau izin Firestore.',
+          ),
+          backgroundColor: Colors.red,
+          action: SnackBarAction(
+            label: 'Coba Lagi',
+            onPressed: () {
+              setState(() {
+                _isBookingConfirmed = false;
+              });
+              _confirmBooking();
+            },
+          ),
+        ),
+      );
+      setState(() {
+        _isBookingConfirmed = false;
+      });
+      return;
+    }
   }
 
- int _calculateTotalPrice() {
+  int _calculateTotalPrice() {
     String priceString = widget.property.price.replaceAll(RegExp(r'[^\d]'), '');
     int? basePrice = int.tryParse(priceString);
 
@@ -441,6 +509,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
 
     return pricePerHour * duration;
   }
+
   @override
   Widget build(BuildContext context) {
     if (_isBookingConfirmed) {
@@ -457,10 +526,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
+        title: const Text(
           'Detail Pesanan',
           style: TextStyle(
-              color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         centerTitle: true,
       ),
@@ -469,7 +541,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-                   Text(
+            Text(
               'Room',
               style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
             ),
@@ -488,8 +560,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
                       image: DecorationImage(
-                        image: AssetImage(widget.property
-                            .imageUrl), 
+                        image: AssetImage(widget.property.imageUrl),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -501,13 +572,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                       children: [
                         Text(
                           widget.selectedRoom,
-                          style: TextStyle(fontWeight: FontWeight.w600),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
                         ),
                         Text(
-                          widget.property
-                              .description,
+                          widget.property.description,
                           style: TextStyle(
-                              fontSize: 12, color: Colors.grey.shade600),
+                            fontSize: 12,
+                            color: Colors.grey.shade600,
+                          ),
                         ),
                       ],
                     ),
@@ -523,21 +595,22 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.location_on, color: Colors.amber, size: 20),
+                const Icon(Icons.location_on, color: Colors.amber, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.property.name, 
-                        style: TextStyle(fontWeight: FontWeight.w600),
+                        widget.property.name,
+                        style: const TextStyle(fontWeight: FontWeight.w600),
                       ),
                       Text(
-                        widget.property
-                            .location, 
+                        widget.property.location,
                         style: TextStyle(
-                            fontSize: 12, color: Colors.grey.shade600),
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
                       ),
                     ],
                   ),
@@ -545,20 +618,22 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
               ],
             ),
             const SizedBox(height: 24),
-            _buildDetailRow('Tanggal Booking',
-                DateFormat('MMM d, yyyy').format(widget.selectedDate)),
+            _buildDetailRow(
+              'Tanggal Booking',
+              DateFormat('MMM d, yyyy').format(widget.selectedDate),
+            ),
             _buildDetailRow('Jam Booking', '${widget.selectedTime} AM'),
             _buildDetailRow(
                 'Durasi Pemesanan', '${widget.selectedDuration} Jam'),
             const SizedBox(height: 16),
-            Divider(),
+            const Divider(),
             const SizedBox(height: 16),
-            _buildDetailRow('Biaya Ruangan', '\$ ${totalPrice.toString()}'),
+            _buildDetailRow('Biaya Ruangan', '\$${totalPrice.toString()}'),
             _buildDetailRow('Pajak', 'Free'),
             const SizedBox(height: 16),
-            Divider(),
+            const Divider(),
             const SizedBox(height: 16),
-            _buildDetailRow('Total', '\$ ${totalPrice.toString()}',
+            _buildDetailRow('Total', '\$${totalPrice.toString()}',
                 isTotal: true),
             const SizedBox(height: 24),
             const SizedBox(height: 16),
@@ -577,7 +652,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
+                    const Text(
                       'Bayar Pesanan',
                       style: TextStyle(
                         color: Colors.white,
@@ -587,8 +662,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      '\$ ${totalPrice.toString()}', 
-                      style: TextStyle(
+                      '\$${totalPrice.toString()}',
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -603,6 +678,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       ),
     );
   }
+
   Widget _buildDetailRow(String label, String value, {bool isTotal = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
@@ -628,7 +704,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
       ),
     );
   }
- Widget _buildSuccessScreen() {
+
+  Widget _buildSuccessScreen() {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
@@ -642,14 +719,14 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                 color: Colors.amber.shade100,
                 shape: BoxShape.circle,
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.check,
                 color: Colors.amber,
                 size: 50,
               ),
             ),
             const SizedBox(height: 24),
-            Text(
+            const Text(
               'Pembayaran Berhasil',
               style: TextStyle(
                 fontSize: 20,
@@ -659,20 +736,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-               
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MyBookingsScreen(
-                      bookingData: BookingData(
-                        property: widget.property,
-                        selectedDate: widget.selectedDate,
-                        selectedRoom: widget.selectedRoom,
-                        selectedTime: widget.selectedTime,
-                        selectedDuration: widget.selectedDuration,
-                        totalPrice: _calculateTotalPrice(),
-                      ),
-                    ),
+                    builder: (context) => const OrderScreen(),
                   ),
                 );
               },
@@ -684,8 +751,33 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
                   borderRadius: BorderRadius.circular(24),
                 ),
               ),
-              child: Text(
+              child: const Text(
                 'Lihat Pesanan Saya',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MainScreen()),
+                  (Route<dynamic> route) => false,
+                );
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.grey,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
+                ),
+              ),
+              child: const Text(
+                'Kembali ke Beranda',
                 style: TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,
@@ -694,285 +786,6 @@ class _BookingDetailScreenState extends State<BookingDetailScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-
-class MyBookingsScreen extends StatelessWidget {
-  final BookingData? bookingData;
-
-  const MyBookingsScreen({super.key, this.bookingData});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Pesanan Saya',
-          style: TextStyle(
-              color: Colors.black, fontSize: 18, fontWeight: FontWeight.w600),
-        ),
-        centerTitle: true,
-      ),
-      body: Column(
-        children: [
-          Container(
-            margin: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                _buildTab(
-                    'Coworking', bookingData?.selectedRoom == 'Co Working'),
-                const SizedBox(width: 16),
-                _buildTab('Meeting Room',
-                    bookingData?.selectedRoom == 'Meeting Room'),
-                const SizedBox(width: 16),
-                _buildTab(
-                    'Room Event', bookingData?.selectedRoom == 'Room Event'),
-              ],
-            ),
-          ),
-          Expanded(
-            child: bookingData != null
-                ? ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade50,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  DateFormat('MMM d, yyyy')
-                                      .format(bookingData!.selectedDate),
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade600),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4),
-                                  decoration: BoxDecoration(
-                                    color: Colors.green,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    'Booking Aktif',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 10),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              bookingData!.property.name,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600),
-                            ),
-                            Text(
-                              bookingData!.property.location,
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.grey.shade600),
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                _buildDetailChip(
-                                    'Room', bookingData!.selectedRoom),
-                                const SizedBox(width: 12),
-                                _buildDetailChip(
-                                    'Jam', '${bookingData!.selectedTime} AM'),
-                                const SizedBox(width: 12),
-                                _buildDetailChip('Durasi',
-                                    '${bookingData!.selectedDuration} Jam'),
-                                const SizedBox(width: 12),
-                                _buildDetailChip(
-                                    'Harga', '\$${bookingData!.totalPrice}'),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: OutlinedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      side: BorderSide(
-                                          color: Colors.grey.shade300),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Ubah Jadwal',
-                                      style: TextStyle(color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      _showBookingDetail(context);
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.amber,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Lihat Detail',
-                                      style: TextStyle(color: Colors.white),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.amber.shade50,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.info,
-                                      color: Colors.amber, size: 16),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      bookingData!.property.description,
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.amber.shade800,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  )
-                : Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.inbox_outlined,
-                          size: 64,
-                          color: Colors.grey.shade400,
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Belum ada pesanan',
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.grey.shade600,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showBookingDetail(BuildContext context) {
-    if (bookingData == null) return;
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Detail Booking'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Property: ${bookingData!.property.name}'),
-              Text('Lokasi: ${bookingData!.property.location}'),
-              Text(
-                  'Tanggal: ${DateFormat('MMM d, yyyy').format(bookingData!.selectedDate)}'),
-              Text('Ruangan: ${bookingData!.selectedRoom}'),
-              Text('Jam: ${bookingData!.selectedTime} AM'),
-              Text('Durasi: ${bookingData!.selectedDuration} Jam'),
-              Text('Total Harga: \$${bookingData!.totalPrice}'),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text('Tutup'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildTab(String title, bool isActive) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: isActive ? Colors.amber : Colors.transparent,
-        borderRadius: BorderRadius.circular(20),
-        border: isActive ? null : Border.all(color: Colors.grey.shade300),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(
-          color: isActive ? Colors.white : Colors.grey.shade600,
-          fontSize: 12,
-          fontWeight: isActive ? FontWeight.w600 : FontWeight.normal,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDetailChip(String label, String value) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      child: Column(
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-          ),
-          Text(
-            value,
-            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
-          ),
-        ],
       ),
     );
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/app_theme.dart';
 import 'package:flutter_application_1/screens/home/data/location_data.dart';
+import 'package:flutter_application_1/utils/app_localizations.dart';
 
 class LocationCard extends StatelessWidget {
   final Location location;
@@ -9,6 +10,8 @@ class LocationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Column(
       children: [
         SizedBox(
@@ -30,11 +33,10 @@ class LocationCard extends StatelessWidget {
                 child: location.id == 1
                     ? Image.asset(
                         location.imageUrl,
-                        
                         width: 35,
                         height: 35,
                         fit: BoxFit.contain,
-                        color: Colors.amber, 
+                        color: Colors.amber,
                       )
                     : Image.asset(
                         location.imageUrl,
@@ -48,7 +50,8 @@ class LocationCard extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(
-          location.name,
+          location.getLocalizedName(
+              l10n.translate), // Menggunakan method untuk translate
           style: AppTheme.headingStyle(size: 14),
         ),
       ],

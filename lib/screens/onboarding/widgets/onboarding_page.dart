@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/screens/onboarding/onboarding_data.dart';
 import 'package:flutter_application_1/utils/app_theme.dart';
+import 'package:flutter_application_1/utils/app_localizations.dart';
 
 class OnboardingPage extends StatelessWidget {
   final OnboardingData onboardingData;
@@ -14,13 +15,12 @@ class OnboardingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
+    final l10n = AppLocalizations.of(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor:
-            Colors.transparent, 
-        statusBarIconBrightness:
-            Brightness.light, 
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -49,7 +49,6 @@ class OnboardingPage extends StatelessWidget {
                 ],
               ),
             ),
-
             Positioned(
               top: screenHeight * 0.6 + 32,
               left: 24,
@@ -58,13 +57,13 @@ class OnboardingPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    onboardingData.title,
+                    l10n.translate(onboardingData.titleKey),
                     textAlign: TextAlign.center,
                     style: AppTheme.headingStyle(size: 24),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    onboardingData.subtitle,
+                    l10n.translate(onboardingData.subtitleKey),
                     textAlign: TextAlign.center,
                     style: AppTheme.contentStyle(),
                   ),

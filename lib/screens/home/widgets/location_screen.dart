@@ -4,6 +4,7 @@ import 'package:flutter_application_1/screens/home/data/location_data.dart';
 import 'package:flutter_application_1/screens/home/data/property_data.dart';
 import 'package:flutter_application_1/screens/home/widgets/property_detail_screen.dart';
 import 'package:flutter_application_1/screens/home/widgets/property_grid_item.dart';
+import 'package:flutter_application_1/utils/app_localizations.dart'; // Tambahkan import ini
 
 class LocationScreen extends StatelessWidget {
   final Location location;
@@ -12,10 +13,13 @@ class LocationScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n =
+        AppLocalizations.of(context); // Tambahkan ini untuk akses translate
+
     final properties = propertyPages
         .where((property) => property.locationId == location.id)
         .toList();
-  final displayProperties =
+    final displayProperties =
         properties.isNotEmpty ? properties : propertyPages;
 
     return Scaffold(
@@ -25,7 +29,8 @@ class LocationScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         title: Text(
-          location.name,
+          location
+              .name, // Atau bisa gunakan l10n.translate jika nama lokasi juga perlu diterjemahkan
           style: AppTheme.headingStyle(size: 18),
         ),
         leading: IconButton(

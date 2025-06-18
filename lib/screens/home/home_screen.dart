@@ -12,6 +12,7 @@ import 'package:flutter_application_1/screens/home/widgets/location_card.dart';
 import 'package:flutter_application_1/screens/home/widgets/promo_card.dart';
 import 'package:flutter_application_1/screens/home/widgets/property_card.dart';
 import 'package:flutter_application_1/screens/home/widgets/article_card.dart';
+import 'package:flutter_application_1/utils/app_localizations.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -24,6 +25,7 @@ class HomeScreen extends StatelessWidget {
       statusBarBrightness: Brightness.light,
     ));
 
+    final l10n = AppLocalizations.of(context);
     final locations = locationPages;
     final frequentlyVisited = propertyPages;
     final promos = promoPages;
@@ -99,7 +101,6 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Container(
@@ -114,12 +115,9 @@ class HomeScreen extends StatelessWidget {
                             fit: BoxFit.cover,
                           ),
                         ),
-                        
                       ),
                     ),
-
                     const SizedBox(height: 24),
-
                     SizedBox(
                       height: 110,
                       child: ListView.builder(
@@ -145,9 +143,7 @@ class HomeScreen extends StatelessWidget {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 24),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
@@ -157,13 +153,11 @@ class HomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Paling Sering dikunjungi',
+                                l10n.translate('frequently_visited'),
                                 style: AppTheme.headingStyle(size: 16),
                               ),
-                               
-                             
                               Text(
-                                'Maksimalkan Bisnis Anda bersama Union Space',
+                                l10n.translate('maximize_business'),
                                 style: AppTheme.contentStyle(
                                   size: 12,
                                   color: Colors.grey,
@@ -171,14 +165,10 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ],
                           ),
-                          
                         ],
                       ),
                     ),
-
-
                     const SizedBox(height: 16),
-
                     SizedBox(
                       height: 240,
                       child: ListView.builder(
@@ -205,10 +195,8 @@ class HomeScreen extends StatelessWidget {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 24),
-
-                   Padding(
+                    Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -217,11 +205,11 @@ class HomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Promo',
+                                l10n.translate('promo'),
                                 style: AppTheme.headingStyle(size: 16),
                               ),
                               Text(
-                                'Kemudahan Dengan Promo',
+                                l10n.translate('promo_subtitle'),
                                 style: AppTheme.contentStyle(
                                   size: 12,
                                   color: Colors.grey,
@@ -230,7 +218,7 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            'Lihat Semua',
+                            l10n.translate('view_all'),
                             style: AppTheme.contentStyle(
                               size: 12,
                               color: Colors.amber,
@@ -239,9 +227,7 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 16),
-
                     SizedBox(
                       height: 150,
                       child: ListView.builder(
@@ -256,9 +242,7 @@ class HomeScreen extends StatelessWidget {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 24),
-
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: Row(
@@ -268,11 +252,11 @@ class HomeScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                'Artikel',
+                                l10n.translate('articles'),
                                 style: AppTheme.headingStyle(size: 16),
                               ),
                               Text(
-                                'Kemudahan Dengan Promo',
+                                l10n.translate('promo_subtitle'),
                                 style: AppTheme.contentStyle(
                                   size: 12,
                                   color: Colors.grey,
@@ -281,7 +265,7 @@ class HomeScreen extends StatelessWidget {
                             ],
                           ),
                           Text(
-                            'Lihat Semua',
+                            l10n.translate('view_all'),
                             style: AppTheme.contentStyle(
                               size: 12,
                               color: Colors.amber,
@@ -290,7 +274,6 @@ class HomeScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-
                     const SizedBox(height: 16),
                     SizedBox(
                       height: 220,
@@ -317,40 +300,11 @@ class HomeScreen extends StatelessWidget {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 24),
                   ],
                 ),
               ],
             ),
-          ),
-        ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppTheme.primaryColor,
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        selectedLabelStyle: AppTheme.contentStyle(size: 12),
-        unselectedLabelStyle: AppTheme.contentStyle(size: 12),
-        currentIndex: 0,
-        items: const [
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/Home.png')),
-            label: 'Beranda',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/Ticket.png')),
-            label: 'Pesanan',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/Discount.png')),
-            label: 'Promo',
-          ),
-          BottomNavigationBarItem(
-            icon: ImageIcon(AssetImage('assets/images/Profile.png')),
-            label: 'Profile',
           ),
         ],
       ),

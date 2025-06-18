@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_application_1/screens/onboarding/onboarding_data.dart';
 import 'package:flutter_application_1/screens/onboarding/widgets/onboarding_page.dart';
-import 'package:flutter_application_1/screens/home/home_screen.dart';
+import 'package:flutter_application_1/screens/auth/login_screen.dart';
+import 'package:flutter_application_1/main.dart';
 import 'package:flutter_application_1/utils/app_theme.dart';
+import 'package:flutter_application_1/utils/app_localizations.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -62,12 +66,21 @@ class _OnboardingScreenState extends State<OnboardingScreen>
       }
     });
 
-    _animationController.addStatusListener((status) {
+    _animationController.addStatusListener((status) async {
       if (status == AnimationStatus.completed) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('hasSeenOnboarding', true);
+
         Future.delayed(const Duration(milliseconds: 700), () {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const HomeScreen()),
-          );
+          if (mounted) {
+            final user = FirebaseAuth.instance.currentUser;
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (_) =>
+                    user != null ? const MainScreen() : const LoginScreen(),
+              ),
+            );
+          }
         });
       }
     });
@@ -103,12 +116,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
+    final l10n = AppLocalizations.of(context);
 
     return Stack(
       children: [
         Scaffold(
           backgroundColor: Colors.white,
-          extendBodyBehindAppBar: true, // Extend content behind app bar
+          extendBodyBehindAppBar: true,
           appBar: PreferredSize(
             preferredSize: const Size.fromHeight(0),
             child: AppBar(
@@ -164,8 +178,10 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                         onPressed: _onButtonPressed,
                         style: AppTheme.primaryButtonStyle,
                         child: Text(
-                          _isLastPage ? 'Mulai Sekarang' : 'Selanjutnya',
-                          style: TextStyle(
+                          _isLastPage
+                              ? l10n.translate('start_now')
+                              : l10n.translate('next'),
+                          style: const TextStyle(
                             fontSize: 16,
                             color: Colors.black,
                           ),
@@ -249,8 +265,8 @@ class LoadingDot extends StatefulWidget {
     required this.color,
     required this.index,
     required this.spacing,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<LoadingDot> createState() => _LoadingDotState();

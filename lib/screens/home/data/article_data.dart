@@ -21,7 +21,7 @@ class Article {
 }
 
 final List<Article> articlePages = [
-  Article(
+  const Article(
     id: '1',
     title: 'Tips Memilih Hotel Yang Nyaman',
     description: 'Temukan rahasia memilih hotel yang tepat untuk liburan Anda',
@@ -31,7 +31,7 @@ final List<Article> articlePages = [
     content:
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam euismod, nibh a congue tempus, quam nunc eleifend nisl, vitae lacinia arcu nisi id mi. Nulla facilisi. Donec auctor, nisl ac ultricies faucibus, orci elit volutpat libero, in bibendum nisl lectus id magna.',
   ),
-  Article(
+  const Article(
     id: '2',
     title: 'Destinasi Wisata Terbaik 2025',
     description: 'Jelajahi tempat-tempat wisata terbaik tahun ini',
@@ -41,7 +41,7 @@ final List<Article> articlePages = [
     content:
         'Phasellus ac nisi at nisl dignissim efficitur ut a elit. Nunc volutpat, lacus vel hendrerit convallis, dui risus tincidunt purus, quis condimentum felis nulla vel dui. Proin ac magna euismod, fermentum nisi id, imperdiet dui.',
   ),
-  Article(
+  const Article(
     id: '3',
     title: 'Cara Hemat Liburan Ke Bali',
     description: 'Panduan lengkap liburan ke Bali dengan budget terbatas',
@@ -51,7 +51,7 @@ final List<Article> articlePages = [
     content:
         'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Praesent eget tortor eu dui aliquam pellentesque. Proin dictum erat vel tortor eleifend, at dictum magna faucibus. Nulla facilisi.',
   ),
-  Article(
+  const Article(
     id: '4',
     title: 'Kuliner Wajib Coba di Yogyakarta',
     description: 'Daftar makanan lezat yang harus dicoba saat ke Yogyakarta',
