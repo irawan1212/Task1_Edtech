@@ -7,7 +7,6 @@ import 'screens/home/home_screen.dart';
 import 'screens/Promo/promo_screen.dart';
 import 'screens/Profile/profile_screen.dart';
 import 'screens/splash_screen.dart';
-import 'screens/auth/auth_wrapper.dart'; // Add AuthWrapper import
 import 'utils/app_localizations.dart';
 import 'utils/language_provider.dart';
 
@@ -33,9 +32,7 @@ class MyApp extends StatelessWidget {
       builder: (context, languageProvider, child) {
         return MaterialApp(
           title: 'Union Space App',
-          theme: ThemeData(
-            primarySwatch: Colors.blue,
-          ),
+          theme: ThemeData(primarySwatch: Colors.blue),
           locale: languageProvider.locale,
           localizationsDelegates: const [
             AppLocalizations.delegate,
@@ -43,10 +40,7 @@ class MyApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          supportedLocales: const [
-            Locale('en', ''),
-            Locale('id', ''),
-          ],
+          supportedLocales: const [Locale('en', ''), Locale('id', '')],
           home: const SplashScreen(),
         );
       },
@@ -93,7 +87,7 @@ class _MainScreenState extends State<MainScreen> {
           ),
           BottomNavigationBarItem(
             icon: const ImageIcon(AssetImage('assets/images/Ticket.png')),
-            label: l10n.translate('orders'),
+            label: l10n.translate('orders_bottonNav'),
           ),
           BottomNavigationBarItem(
             icon: const ImageIcon(AssetImage('assets/images/Discount.png')),

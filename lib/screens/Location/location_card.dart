@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/app_theme.dart';
-import 'package:flutter_application_1/screens/home/data/location_data.dart';
+import 'package:flutter_application_1/utils/firebase_data.dart';
 import 'package:flutter_application_1/utils/app_localizations.dart';
 
 class LocationCard extends StatelessWidget {
@@ -30,28 +30,35 @@ class LocationCard extends StatelessWidget {
               ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(35),
-                child: location.id == 1
-                    ? Image.asset(
-                        location.imageUrl,
-                        width: 35,
-                        height: 35,
-                        fit: BoxFit.contain,
-                        color: Colors.amber,
-                      )
-                    : Image.asset(
-                        location.imageUrl,
-                        width: 70,
-                        height: 70,
-                        fit: BoxFit.cover,
+                child: Image.network(
+                  location.urlimageCity?.isNotEmpty == true
+                      ? location.urlimageCity!
+                      : 'https://via.placeholder.com/70',
+                  width: 70,
+                  height: 70,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      width: 70,
+                      height: 70,
+                      color: Colors.grey.shade300,
+                      child: const Center(
+                        child: Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                          size: 30,
+                        ),
                       ),
+                    );
+                  },
+                ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 8),
         Text(
-          location.getLocalizedName(
-              l10n.translate), // Menggunakan method untuk translate
+          location.nameCity.isNotEmpty ? location.nameCity : 'Unknown City',
           style: AppTheme.headingStyle(size: 14),
         ),
       ],

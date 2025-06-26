@@ -1,6 +1,8 @@
+// article_card.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/home/data/article_data.dart';
+import 'package:flutter_application_1/utils/firebase_data.dart';
 import 'package:flutter_application_1/utils/app_theme.dart';
+import 'package:flutter_application_1/utils/app_localizations.dart';
 
 class ArticleCard extends StatelessWidget {
   final Article article;
@@ -9,6 +11,7 @@ class ArticleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: 280,
       decoration: BoxDecoration(
@@ -30,11 +33,21 @@ class ArticleCard extends StatelessWidget {
               topLeft: Radius.circular(12),
               topRight: Radius.circular(12),
             ),
-            child: Image.asset(
-              article.imageUrl,
-              height: 120,
+            child: Image.network(
+              article.image.isNotEmpty
+                  ? article.image
+                  : 'https://via.placeholder.com/150',
+              height: 150,
               width: double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                height: 120,
+                width: double.infinity,
+                color: Colors.grey.shade300,
+                child: const Center(
+                  child: Icon(Icons.broken_image, color: Colors.grey, size: 40),
+                ),
+              ),
             ),
           ),
           Padding(
@@ -43,24 +56,30 @@ class ArticleCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  article.title,
-                  style: AppTheme.headingStyle(size: 14),
+                  article.title.isNotEmpty
+                      ? article.title
+                      : l10n.translate('untitled'),
+                  style: AppTheme.headingStyle(size: 16),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 24),
                 Row(
                   children: [
                     const Icon(
                       Icons.calendar_today_outlined,
-                      size: 12,
+                      size: 14,
                       color: Colors.grey,
                     ),
                     const SizedBox(width: 4),
                     Text(
-                    
-                      article.date,
-                      style: AppTheme.contentStyle(size: 10, color: Colors.grey),
+                      article.date.isNotEmpty
+                          ? article.date
+                          : l10n.translate('unknown_date'),
+                      style: AppTheme.contentStyle(
+                        size: 14,
+                        color: Colors.grey,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     const Icon(
@@ -70,8 +89,13 @@ class ArticleCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      article.author,
-                      style: AppTheme.contentStyle(size: 10, color: Colors.grey),
+                      article.author?.isNotEmpty == true
+                          ? article.author!
+                          : l10n.translate('unknown_author'),
+                      style: AppTheme.contentStyle(
+                        size: 10,
+                        color: Colors.grey,
+                      ),
                     ),
                   ],
                 ),
@@ -83,4 +107,3 @@ class ArticleCard extends StatelessWidget {
     );
   }
 }
-

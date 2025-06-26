@@ -1,6 +1,7 @@
+// property_grid_item.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/utils/app_theme.dart';
-import 'package:flutter_application_1/screens/home/data/property_data.dart';
+import 'package:flutter_application_1/utils/firebase_data.dart';
 
 class PropertyGridItem extends StatelessWidget {
   final Property property;
@@ -31,11 +32,18 @@ class PropertyGridItem extends StatelessWidget {
                   topLeft: Radius.circular(12),
                   topRight: Radius.circular(12),
                 ),
-                child: Image.asset(
-                  property.imageUrl,
+                child: Image.network(
+                  property.urlimageProperty ??
+                      'https://via.placeholder.com/150',
                   height: 120,
                   width: double.infinity,
                   fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                    'assets/images/default_property.png',
+                    height: 120,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Positioned(
@@ -58,7 +66,7 @@ class PropertyGridItem extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  property.name,
+                  property.nameProperty,
                   style: AppTheme.headingStyle(size: 12),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -70,9 +78,11 @@ class PropertyGridItem extends StatelessWidget {
                     const SizedBox(width: 2),
                     Expanded(
                       child: Text(
-                        property.location,
-                        style:
-                            AppTheme.contentStyle(size: 9, color: Colors.grey),
+                        property.addressProperty ?? 'Unknown Location',
+                        style: AppTheme.contentStyle(
+                          size: 9,
+                          color: Colors.grey,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -81,22 +91,8 @@ class PropertyGridItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Rp${property.price}/bulan',
-                  style: AppTheme.contentStyle(
-                    size: 11,
-                    color: AppTheme.primaryColor,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.star, color: Colors.amber, size: 10),
-                    const SizedBox(width: 2),
-                    Text(
-                      '${property.rating}',
-                      style: AppTheme.contentStyle(size: 9),
-                    ),
-                  ],
+                  'Rp${property.price?.toStringAsFixed(0) ?? '0'}/bulan',
+                  style: AppTheme.contentStyle(size: 11, color: Colors.black),
                 ),
               ],
             ),

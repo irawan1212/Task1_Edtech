@@ -1,6 +1,8 @@
+// article_detail_screen.dart
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/screens/home/data/article_data.dart';
+import 'package:flutter_application_1/utils/firebase_data.dart';
 import 'package:flutter_application_1/utils/app_theme.dart';
+import 'package:flutter_application_1/utils/app_localizations.dart';
 
 class ArticleDetailScreen extends StatelessWidget {
   final Article article;
@@ -9,6 +11,7 @@ class ArticleDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -19,7 +22,7 @@ class ArticleDetailScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Artikel',
+          l10n.translate('article'), // Localized
           style: AppTheme.headingStyle(size: 18),
         ),
         centerTitle: true,
@@ -28,20 +31,29 @@ class ArticleDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              article.imageUrl,
+            Image.network(
+              article.image.isNotEmpty
+                  ? article.image
+                  : 'https://via.placeholder.com/200',
               height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Image.asset(
+                'assets/images/default_article.png',
+                height: 200,
+                width: double.infinity,
+                fit: BoxFit.cover,
+              ),
             ),
-
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    article.title,
+                    article.title.isNotEmpty
+                        ? article.title
+                        : l10n.translate('untitled'),
                     style: AppTheme.headingStyle(size: 20),
                   ),
                   const SizedBox(height: 8),
@@ -54,9 +66,13 @@ class ArticleDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        article.date,
-                        style:
-                            AppTheme.contentStyle(size: 12, color: Colors.grey),
+                        article.date.isNotEmpty
+                            ? article.date
+                            : l10n.translate('unknown_date'),
+                        style: AppTheme.contentStyle(
+                          size: 12,
+                          color: Colors.grey,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       const Icon(
@@ -66,31 +82,28 @@ class ArticleDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        article.author,
-                        style:
-                            AppTheme.contentStyle(size: 12, color: Colors.grey),
+                        article.author?.isNotEmpty == true
+                            ? article.author!
+                            : l10n.translate('unknown_author'),
+                        style: AppTheme.contentStyle(
+                          size: 12,
+                          color: Colors.grey,
+                        ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    article.description,
-                    style: AppTheme.contentStyle(
-                        size: 14),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    article.content,
+                    article.description.isNotEmpty
+                        ? article.description
+                        : l10n.translate('no_description'),
                     style: AppTheme.contentStyle(size: 14),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam euismod, nibh a congue tempus, quam nunc eleifend nisl, vitae lacinia arcu nisi id mi. Nulla facilisi. Donec auctor, nisl ac ultricies faucibus, orci elit volutpat libero, in bibendum nisl lectus id magna. Phasellus ac nisi at nisl dignissim efficitur ut a elit. Nunc volutpat, lacus vel hendrerit convallis, dui risus tincidunt purus, quis condimentum felis nulla vel dui. Proin ac magna euismod, fermentum nisi id, imperdiet dui. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia curae; Praesent eget tortor eu dui aliquam pellentesque.',
-                    style: AppTheme.contentStyle(size: 14),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    'Fusce vulputate, nibh non pretium varius, ligula nisl feugiat arcu, sit amet ultrices mi augue at est. Donec et ultricies orci. Cras rhoncus purus in mauris facilisis volutpat. Etiam blandit lacus vel risus varius, in vehicula nibh finibus.',
+                    article.content.isNotEmpty
+                        ? article.content
+                        : l10n.translate('no_content'),
                     style: AppTheme.contentStyle(size: 14),
                   ),
                 ],

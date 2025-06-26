@@ -34,8 +34,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   bool _showLoadingAnimation = false;
   final int _totalDots = 5;
-  final double _dotSize = 8.0;
-  final double _dotSpacing = 30.0;
 
   @override
   void initState() {
@@ -113,10 +111,83 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     }
   }
 
+  // Helper function untuk mendapatkan responsive padding
+  double _getResponsivePadding(Size screenSize) {
+    if (screenSize.width < 360) {
+      return 16; // Small screens
+    } else if (screenSize.width < 400) {
+      return 20; // Medium screens
+    } else {
+      return 24; // Large screens
+    }
+  }
+
+  // Helper function untuk mendapatkan responsive spacing
+  double _getResponsiveSpacing(Size screenSize) {
+    if (screenSize.width < 360) {
+      return 16;
+    } else if (screenSize.width < 400) {
+      return 20;
+    } else {
+      return 24;
+    }
+  }
+
+  // Helper function untuk mendapatkan responsive button height
+  double _getResponsiveButtonHeight(Size screenSize) {
+    if (screenSize.height < 700) {
+      return 48; // Shorter screens
+    } else if (screenSize.height < 800) {
+      return 52; // Medium screens
+    } else {
+      return 56; // Taller screens
+    }
+  }
+
+  // Helper function untuk mendapatkan responsive dot size
+  double _getResponsiveDotSize(Size screenSize) {
+    if (screenSize.width < 360) {
+      return 6.0;
+    } else if (screenSize.width < 400) {
+      return 7.0;
+    } else {
+      return 8.0;
+    }
+  }
+
+  // Helper function untuk mendapatkan responsive dot spacing
+  double _getResponsiveDotSpacing(Size screenSize) {
+    if (screenSize.width < 360) {
+      return 20.0;
+    } else if (screenSize.width < 400) {
+      return 25.0;
+    } else {
+      return 30.0;
+    }
+  }
+
+  // Helper function untuk mendapatkan responsive font size untuk button
+  double _getResponsiveButtonFontSize(Size screenSize) {
+    if (screenSize.width < 360) {
+      return 14;
+    } else if (screenSize.width < 400) {
+      return 15;
+    } else {
+      return 16;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
     final l10n = AppLocalizations.of(context);
+
+    final responsivePadding = _getResponsivePadding(_screenSize);
+    final responsiveSpacing = _getResponsiveSpacing(_screenSize);
+    final responsiveButtonHeight = _getResponsiveButtonHeight(_screenSize);
+    final responsiveDotSize = _getResponsiveDotSize(_screenSize);
+    final responsiveDotSpacing = _getResponsiveDotSpacing(_screenSize);
+    final responsiveButtonFontSize = _getResponsiveButtonFontSize(_screenSize);
 
     return Stack(
       children: [
@@ -135,63 +206,72 @@ class _OnboardingScreenState extends State<OnboardingScreen>
               ),
             ),
           ),
-          body: Column(
-            children: [
-              Expanded(
-                child: PageView.builder(
-                  controller: _pageController,
-                  itemCount: onboardingPages.length,
-                  itemBuilder: (context, index) {
-                    return OnboardingPage(
-                      onboardingData: onboardingPages[index],
-                    );
-                  },
+          body: SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: PageView.builder(
+                    controller: _pageController,
+                    itemCount: onboardingPages.length,
+                    itemBuilder: (context, index) {
+                      return OnboardingPage(
+                        onboardingData: onboardingPages[index],
+                      );
+                    },
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        onboardingPages.length,
-                        (index) => Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                          width: 8,
-                          height: 8,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: _currentPage == index
-                                ? AppTheme.primaryColor
-                                : AppTheme.primaryColor.withOpacity(0.2),
+                Padding(
+                  padding: EdgeInsets.all(responsivePadding),
+                  child: Column(
+                    children: [
+                      // Page indicators with responsive sizing
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: List.generate(
+                          onboardingPages.length,
+                          (index) => Container(
+                            margin: EdgeInsets.symmetric(
+                              horizontal: responsiveDotSize / 2,
+                            ),
+                            width: responsiveDotSize,
+                            height: responsiveDotSize,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: _currentPage == index
+                                  ? AppTheme.primaryColor
+                                  : AppTheme.primaryColor.withOpacity(0.2),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 24),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        key: _buttonKey,
-                        onPressed: _onButtonPressed,
-                        style: AppTheme.primaryButtonStyle,
-                        child: Text(
-                          _isLastPage
-                              ? l10n.translate('start_now')
-                              : l10n.translate('next'),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: Colors.black,
+                      SizedBox(height: responsiveSpacing),
+                      // Responsive button
+                      SizedBox(
+                        width: double.infinity,
+                        height: responsiveButtonHeight,
+                        child: ElevatedButton(
+                          key: _buttonKey,
+                          onPressed: _onButtonPressed,
+                          style: AppTheme.primaryButtonStyle,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              _isLastPage
+                                  ? l10n.translate('start_now')
+                                  : l10n.translate('next'),
+                              style: TextStyle(
+                                fontSize: responsiveButtonFontSize,
+                                color: Colors.black,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         if (_showAnimation)
@@ -211,19 +291,20 @@ class _OnboardingScreenState extends State<OnboardingScreen>
           ),
         if (_showLoadingAnimation)
           Positioned(
-            left:
-                (_screenSize.width - (_totalDots * (_dotSize + _dotSpacing))) /
-                    2,
-            top: _screenSize.height / 2 + 40,
+            left: (_screenSize.width -
+                    (_totalDots * (responsiveDotSize + responsiveDotSpacing))) /
+                2,
+            top: _screenSize.height / 2 +
+                (responsiveButtonHeight * 0.7), // Responsive positioning
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
                 _totalDots,
                 (index) => LoadingDot(
-                  size: _dotSize,
+                  size: responsiveDotSize,
                   color: AppTheme.primaryColor,
                   index: index,
-                  spacing: _dotSpacing,
+                  spacing: responsiveDotSpacing,
                 ),
               ),
             ),
@@ -288,11 +369,16 @@ class _LoadingDotState extends State<LoadingDot>
       duration: const Duration(milliseconds: 600),
     );
 
-    _scaleAnimation = Tween<double>(begin: 2.5, end: 2.5).animate(
+    // Responsive scale animation
+    final scaleFactor = widget.size / 8.0; // Base size ratio
+    _scaleAnimation =
+        Tween<double>(begin: 2.0 * scaleFactor, end: 2.5 * scaleFactor).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 
-    _positionAnimation = Tween<double>(begin: 0.0, end: -15.0).animate(
+    // Responsive position animation
+    _positionAnimation =
+        Tween<double>(begin: 0.0, end: -12.0 * scaleFactor).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
 

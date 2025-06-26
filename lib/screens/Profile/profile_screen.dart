@@ -440,7 +440,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       child: ElevatedButton(
                         onPressed: _logout,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF5F5F5),
+                          backgroundColor: const Color.fromARGB(255, 108, 107, 107),
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
@@ -456,28 +456,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: _deleteAccount,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFF5F5F5),
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
-                        ),
-                        child: Text(
-                          l10n.translate('delete_account'),
-                          style: const TextStyle(
-                            color: Colors.red,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                    ),
+                    
                   ],
                 ],
               ),

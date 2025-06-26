@@ -67,10 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void _showSnackBar(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red.shade400,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red.shade400),
       );
     }
   }
@@ -79,23 +76,32 @@ class _LoginScreenState extends State<LoginScreen> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => PhoneInputScreen(onSuccess: () {
-          Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => const MainScreen()),
-            (Route<dynamic> route) => false,
-          );
-        }),
+        builder: (context) => PhoneInputScreen(
+          onSuccess: () {
+            Navigator.of(context).pushAndRemoveUntil(
+              MaterialPageRoute(builder: (context) => const MainScreen()),
+              (Route<dynamic> route) => false,
+            );
+          },
+        ),
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenHeight < 700;
+    final imageHeight =
+        isSmallScreen ? screenHeight * 0.55 : screenHeight * 0.65;
+
     return Scaffold(
       body: Stack(
         children: [
+          // Background image
           Container(
-            height: MediaQuery.of(context).size.height * 0.65,
+            height: imageHeight,
             decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/image 1.png'),
@@ -103,8 +109,9 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+          // Gradient overlay
           Container(
-            height: MediaQuery.of(context).size.height * 0.65,
+            height: imageHeight,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
@@ -117,17 +124,18 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+          // Back button
           SafeArea(
             child: Align(
               alignment: Alignment.topLeft,
               child: Padding(
-                padding: const EdgeInsets.all(16.0),
+                padding: EdgeInsets.all(screenWidth * 0.04),
                 child: IconButton(
                   onPressed: _isLoading ? null : _skipLogin,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.arrow_back_ios,
                     color: Colors.white,
-                    size: 20,
+                    size: screenWidth * 0.05,
                   ),
                   style: IconButton.styleFrom(
                     backgroundColor: Colors.black.withOpacity(0.3),
@@ -139,9 +147,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
           ),
+          // Main content
           Column(
             children: [
-              SizedBox(height: MediaQuery.of(context).size.height * 0.5),
+              SizedBox(height: imageHeight * 0.77),
               Expanded(
                 child: Container(
                   width: double.infinity,
@@ -152,110 +161,164 @@ class _LoginScreenState extends State<LoginScreen> {
                       topRight: Radius.circular(55),
                     ),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24, 100, 24, 50),
-                    child: Column(
-                      children: [
-                        Container(
-                          height: 40,
-                          child: Image.asset(
-                            'assets/images/cropped-Logo-US-Header-1 1.png',
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        const SizedBox(height: 50),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 52,
-                          child: ElevatedButton(
-                            onPressed: _isLoading ? null : _phoneLogin,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFFD700),
-                              foregroundColor: Colors.black,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(90),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final contentHeight = constraints.maxHeight;
+                      final isVerySmallScreen = contentHeight < 400;
+
+                      return SingleChildScrollView(
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(minHeight: contentHeight),
+                          child: IntrinsicHeight(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(
+                                screenWidth * 0.06,
+                                isVerySmallScreen
+                                    ? screenHeight * 0.05
+                                    : screenHeight * 0.08,
+                                screenWidth * 0.06,
+                                screenHeight * 0.04,
                               ),
-                              elevation: 0,
-                              disabledBackgroundColor: Colors.grey.shade300,
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.black),
-                                    ),
-                                  )
-                                : const Text(
-                                    'Masuk dengan nomor telepon',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.black,
+                              child: Column(
+                                children: [
+                                  // Logo
+                                  Container(
+                                    height: isSmallScreen ? 30 : 40,
+                                    child: Image.asset(
+                                      'assets/images/cropped-Logo-US-Header-1 1.png',
+                                      fit: BoxFit.contain,
                                     ),
                                   ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Atau',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          width: double.infinity,
-                          height: 52,
-                          child: OutlinedButton(
-                            onPressed: _isLoading ? null : _signInWithGoogle,
-                            style: OutlinedButton.styleFrom(
-                              side: BorderSide(
-                                  color: Colors.grey.shade300, width: 1.5),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              backgroundColor: Colors.white,
-                              disabledBackgroundColor: Colors.grey.shade100,
-                            ),
-                            child: _isLoading
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                          Colors.grey),
-                                    ),
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image.asset(
-                                        'assets/images/google-logo-icon-gsuite-hd-701751694791470gzbayltphh.png',
-                                        width: 24,
-                                        height: 24,
-                                      ),
-                                      const SizedBox(width: 8),
-                                      const Text(
-                                        'Masuk dengan Google',
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
+                                  SizedBox(
+                                      height: isSmallScreen
+                                          ? screenHeight * 0.04
+                                          : screenHeight * 0.06),
+
+                                  // Phone login button
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: screenHeight * 0.065,
+                                    child: ElevatedButton(
+                                      onPressed:
+                                          _isLoading ? null : _phoneLogin,
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor:
+                                            const Color(0xFFFFD700),
+                                        foregroundColor: Colors.black,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(90),
                                         ),
+                                        elevation: 0,
+                                        disabledBackgroundColor:
+                                            Colors.grey.shade300,
                                       ),
-                                    ],
+                                      child: _isLoading
+                                          ? SizedBox(
+                                              height: screenHeight * 0.025,
+                                              width: screenHeight * 0.025,
+                                              child:
+                                                  const CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(
+                                                  Colors.black,
+                                                ),
+                                              ),
+                                            )
+                                          : Text(
+                                              'Masuk dengan nomor telepon',
+                                              style: TextStyle(
+                                                fontSize: screenWidth * 0.04,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                    ),
                                   ),
+
+                                  SizedBox(height: screenHeight * 0.01),
+
+                                  // "Atau" text
+                                  Text(
+                                    'Atau',
+                                    style: TextStyle(
+                                      fontSize: screenWidth * 0.035,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+
+                                  SizedBox(height: screenHeight * 0.01),
+
+                                  // Google sign in button
+                                  SizedBox(
+                                    width: double.infinity,
+                                    height: screenHeight * 0.065,
+                                    child: OutlinedButton(
+                                      onPressed:
+                                          _isLoading ? null : _signInWithGoogle,
+                                      style: OutlinedButton.styleFrom(
+                                        side: BorderSide(
+                                          color: Colors.grey.shade300,
+                                          width: 1.5,
+                                        ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        backgroundColor: Colors.white,
+                                        disabledBackgroundColor:
+                                            Colors.grey.shade100,
+                                      ),
+                                      child: _isLoading
+                                          ? SizedBox(
+                                              height: screenHeight * 0.025,
+                                              width: screenHeight * 0.025,
+                                              child:
+                                                  const CircularProgressIndicator(
+                                                strokeWidth: 2,
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                        Color>(
+                                                  Colors.grey,
+                                                ),
+                                              ),
+                                            )
+                                          : Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                Image.asset(
+                                                  'assets/images/google-logo-icon-gsuite-hd-701751694791470gzbayltphh.png',
+                                                  width: screenWidth * 0.06,
+                                                  height: screenWidth * 0.06,
+                                                ),
+                                                SizedBox(
+                                                    width: screenWidth * 0.02),
+                                                Text(
+                                                  'Masuk dengan Google',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        screenWidth * 0.04,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.black,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                    ),
+                                  ),
+
+                                  const Spacer(),
+                                ],
+                              ),
+                            ),
                           ),
                         ),
-                        const Spacer(),
-                      ],
-                    ),
+                      );
+                    },
                   ),
                 ),
               ),
@@ -292,10 +355,7 @@ class _PhoneInputScreenState extends State<PhoneInputScreen> {
   void _showSnackBar(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red.shade400,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red.shade400),
       );
     }
   }
@@ -365,173 +425,193 @@ class _PhoneInputScreenState extends State<PhoneInputScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+            size: screenWidth * 0.05,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Hallo 👋',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 18,
+            fontSize: screenWidth * 0.045,
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Silahkan masukkan nomor handphone Anda untuk memulai proses verifikasi. Kode OTP akan dikirim melalui SMS.',
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                height: 1.5,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.06),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Silahkan masukkan nomor handphone Anda untuk memulai proses verifikasi. Kode OTP akan dikirim melalui SMS.',
+                style: TextStyle(
+                  fontSize: screenWidth * 0.035,
+                  color: Colors.grey,
+                  height: 1.5,
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'Nomor telepon',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black87,
+              SizedBox(height: screenHeight * 0.04),
+              Text(
+                'Nomor telepon',
+                style: TextStyle(
+                  fontSize: screenWidth * 0.035,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Container(
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 12, vertical: 16),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/indonesia_flag.png',
-                          width: 24,
-                          height: 16,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(
-                            width: 24,
-                            height: 16,
-                            color: Colors.red,
-                            child: const Center(
-                              child: Text(
-                                'ID',
-                                style: TextStyle(
-                                  fontSize: 8,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
+              SizedBox(height: screenHeight * 0.01),
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: screenWidth * 0.03,
+                        vertical: screenHeight * 0.02,
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            'assets/images/indonesia_flag.png',
+                            width: screenWidth * 0.06,
+                            height: screenWidth * 0.04,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Container(
+                              width: screenWidth * 0.06,
+                              height: screenWidth * 0.04,
+                              color: Colors.red,
+                              child: Center(
+                                child: Text(
+                                  'ID',
+                                  style: TextStyle(
+                                    fontSize: screenWidth * 0.02,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          '+62',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                          SizedBox(width: screenWidth * 0.02),
+                          Text(
+                            '+62',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.04,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: 1,
+                      height: screenHeight * 0.025,
+                      color: Colors.grey.shade300,
+                    ),
+                    Expanded(
+                      child: TextField(
+                        controller: _phoneController,
+                        keyboardType: TextInputType.phone,
+                        style: TextStyle(fontSize: screenWidth * 0.04),
+                        decoration: InputDecoration(
+                          hintText: '818 1234 5678',
+                          hintStyle: TextStyle(fontSize: screenWidth * 0.04),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: screenWidth * 0.03,
+                            vertical: screenHeight * 0.02,
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 1,
-                    height: 20,
-                    color: Colors.grey.shade300,
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: _phoneController,
-                      keyboardType: TextInputType.phone,
-                      decoration: const InputDecoration(
-                        hintText: '818 1234 5678',
-                        border: InputBorder.none,
-                        contentPadding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        onChanged: (value) {
+                          if (!value.startsWith('+62 ')) {
+                            _phoneController.text = '+62 ';
+                            _phoneController.selection =
+                                TextSelection.fromPosition(
+                              TextPosition(
+                                  offset: _phoneController.text.length),
+                            );
+                          }
+                        },
                       ),
-                      onChanged: (value) {
-                        if (!value.startsWith('+62 ')) {
-                          _phoneController.text = '+62 ';
-                          _phoneController.selection =
-                              TextSelection.fromPosition(
-                            TextPosition(offset: _phoneController.text.length),
-                          );
-                        }
-                      },
                     ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-            RichText(
-              text: TextSpan(
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-                children: [
-                  const TextSpan(text: 'Dengan mendaftar, saya menyetujui '),
-                  TextSpan(
-                    text: 'syarat dan ketentuan',
-                    style: TextStyle(color: Colors.blue.shade600),
-                  ),
-                  const TextSpan(text: ' serta '),
-                  TextSpan(
-                    text: 'kebijakan',
-                    style: TextStyle(color: Colors.blue.shade600),
-                  ),
-                ],
-              ),
-            ),
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: _isLoading ? null : _sendOTP,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
+                  ],
                 ),
-                child: _isLoading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.black),
-                        ),
-                      )
-                    : const Text(
-                        'Kirimkan OTP',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
               ),
-            ),
-            const SizedBox(height: 24),
-          ],
+              SizedBox(height: screenHeight * 0.02),
+              RichText(
+                text: TextSpan(
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.03,
+                    color: Colors.grey,
+                  ),
+                  children: [
+                    const TextSpan(text: 'Dengan mendaftar, saya menyetujui '),
+                    TextSpan(
+                      text: 'syarat dan ketentuan',
+                      style: TextStyle(color: Colors.blue.shade600),
+                    ),
+                    const TextSpan(text: ' serta '),
+                    TextSpan(
+                      text: 'kebijakan',
+                      style: TextStyle(color: Colors.blue.shade600),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                height: screenHeight * 0.065,
+                child: ElevatedButton(
+                  onPressed: _isLoading ? null : _sendOTP,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFD700),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: _isLoading
+                      ? SizedBox(
+                          height: screenHeight * 0.025,
+                          width: screenHeight * 0.025,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.black,
+                            ),
+                          ),
+                        )
+                      : Text(
+                          'Kirimkan OTP',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.03),
+            ],
+          ),
         ),
       ),
     );
@@ -562,10 +642,7 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
   void _showSnackBar(String message) {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          backgroundColor: Colors.red.shade400,
-        ),
+        SnackBar(content: Text(message), backgroundColor: Colors.red.shade400),
       );
     }
   }
@@ -616,10 +693,11 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     });
   }
 
-  Widget _buildOTPBox(int index) {
+  Widget _buildOTPBox(int index, double screenWidth) {
+    final boxSize = screenWidth * 0.12;
     return Container(
-      width: 48,
-      height: 48,
+      width: boxSize,
+      height: boxSize,
       decoration: BoxDecoration(
         border: Border.all(
           color: index < _otpCode.length
@@ -635,8 +713,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       child: Center(
         child: Text(
           index < _otpCode.length ? _otpCode[index] : '',
-          style: const TextStyle(
-            fontSize: 24,
+          style: TextStyle(
+            fontSize: screenWidth * 0.06,
             fontWeight: FontWeight.bold,
             color: Colors.black,
           ),
@@ -645,24 +723,29 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
     );
   }
 
-  Widget _buildKeypadButton(String value, {bool isBackspace = false}) {
+  Widget _buildKeypadButton(String value, double screenWidth,
+      {bool isBackspace = false}) {
+    final buttonSize = screenWidth * 0.18;
     return GestureDetector(
       onTap: () => _onKeypadTap(value),
       child: Container(
-        width: 80,
-        height: 80,
+        width: buttonSize,
+        height: buttonSize,
         decoration: BoxDecoration(
           color: Colors.grey.shade50,
-          borderRadius: BorderRadius.circular(40),
+          borderRadius: BorderRadius.circular(buttonSize / 2),
         ),
         child: Center(
           child: isBackspace
-              ? const Icon(Icons.backspace_outlined,
-                  size: 24, color: Colors.black54)
+              ? Icon(
+                  Icons.backspace_outlined,
+                  size: screenWidth * 0.06,
+                  color: Colors.black54,
+                )
               : Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 24,
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.06,
                     fontWeight: FontWeight.w500,
                     color: Colors.black87,
                   ),
@@ -674,155 +757,178 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.black),
+          icon: Icon(
+            Icons.arrow_back_ios,
+            color: Colors.black,
+            size: screenWidth * 0.05,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
+        title: Text(
           'Verifikasi kode OTP 📱',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 18,
+            fontSize: screenWidth * 0.045,
             fontWeight: FontWeight.w600,
           ),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'Kami telah mengirimkan kode OTP ke nomor telepon ${widget.phoneNumber}',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Silakan masukkan kode OTP di bawah untuk melanjutkan',
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.grey,
-                height: 1.5,
-              ),
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: List.generate(6, (index) => _buildOTPBox(index)),
-            ),
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap: () {
-                // Implement resend OTP logic here
-              },
-              child: const Text(
-                'Tidak menerima OTP?',
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.06),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                'Kami telah mengirimkan kode OTP ke nomor telepon ${widget.phoneNumber}',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: screenWidth * 0.035,
                   color: Colors.grey,
+                  height: 1.5,
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-            GestureDetector(
-              onTap: () {
-                // Implement resend OTP logic here
-              },
-              child: Text(
-                'Mengirim ulang kode melalui 4x 6',
+              SizedBox(height: screenHeight * 0.01),
+              Text(
+                'Silakan masukkan kode OTP di bawah untuk melanjutkan',
+                textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.blue.shade600,
-                  fontWeight: FontWeight.w500,
+                  fontSize: screenWidth * 0.035,
+                  color: Colors.grey,
+                  height: 1.5,
                 ),
               ),
-            ),
-            const SizedBox(height: 40),
-            Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildKeypadButton('1'),
-                    _buildKeypadButton('2'),
-                    _buildKeypadButton('3'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildKeypadButton('4'),
-                    _buildKeypadButton('5'),
-                    _buildKeypadButton('6'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildKeypadButton('7'),
-                    _buildKeypadButton('8'),
-                    _buildKeypadButton('9'),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    const SizedBox(width: 80),
-                    _buildKeypadButton('0'),
-                    _buildKeypadButton('backspace', isBackspace: true),
-                  ],
-                ),
-              ],
-            ),
-            const Spacer(),
-            if (_otpCode.length == 6)
-              SizedBox(
-                width: double.infinity,
-                height: 52,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _verifyOTP,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFD700),
-                    foregroundColor: Colors.black,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    elevation: 0,
+              SizedBox(height: screenHeight * 0.05),
+
+              // OTP Input boxes
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: List.generate(
+                    6, (index) => _buildOTPBox(index, screenWidth)),
+              ),
+
+              SizedBox(height: screenHeight * 0.03),
+
+              GestureDetector(
+                onTap: () {
+                  // Implement resend OTP logic here
+                },
+                child: Text(
+                  'Tidak menerima OTP?',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.035,
+                    color: Colors.grey,
                   ),
-                  child: _isLoading
-                      ? const SizedBox(
-                          height: 20,
-                          width: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor:
-                                AlwaysStoppedAnimation<Color>(Colors.black),
-                          ),
-                        )
-                      : const Text(
-                          'Verifikasi',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
                 ),
               ),
-          ],
+              SizedBox(height: screenHeight * 0.01),
+              GestureDetector(
+                onTap: () {
+                  // Implement resend OTP logic here
+                },
+                child: Text(
+                  'Mengirim ulang kode melalui 4x 6',
+                  style: TextStyle(
+                    fontSize: screenWidth * 0.035,
+                    color: Colors.blue.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+
+              SizedBox(height: screenHeight * 0.05),
+
+              // Custom keypad
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildKeypadButton('1', screenWidth),
+                        _buildKeypadButton('2', screenWidth),
+                        _buildKeypadButton('3', screenWidth),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.025),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildKeypadButton('4', screenWidth),
+                        _buildKeypadButton('5', screenWidth),
+                        _buildKeypadButton('6', screenWidth),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.025),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildKeypadButton('7', screenWidth),
+                        _buildKeypadButton('8', screenWidth),
+                        _buildKeypadButton('9', screenWidth),
+                      ],
+                    ),
+                    SizedBox(height: screenHeight * 0.025),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        SizedBox(width: screenWidth * 0.18),
+                        _buildKeypadButton('0', screenWidth),
+                        _buildKeypadButton('backspace', screenWidth,
+                            isBackspace: true),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Verify button
+              if (_otpCode.length == 6)
+                SizedBox(
+                  width: double.infinity,
+                  height: screenHeight * 0.065,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _verifyOTP,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFD700),
+                      foregroundColor: Colors.black,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: _isLoading
+                        ? SizedBox(
+                            height: screenHeight * 0.025,
+                            width: screenHeight * 0.025,
+                            child: const CircularProgressIndicator(
+                              strokeWidth: 2,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.black,
+                              ),
+                            ),
+                          )
+                        : Text(
+                            'Verifikasi',
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.04,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -836,59 +942,64 @@ class SuccessScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: const BoxDecoration(
-                color: Color(0xFFFFD700),
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.check,
-                size: 60,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 32),
-            const Text(
-              'Verifikasi Berhasil!',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 80),
-            SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
-                onPressed: onContinue,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFFD700),
-                  foregroundColor: Colors.black,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  elevation: 0,
+      body: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(screenWidth * 0.06),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: screenWidth * 0.3,
+                height: screenWidth * 0.3,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFFFD700),
+                  shape: BoxShape.circle,
                 ),
-                child: const Text(
-                  'Lanjutkan',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+                child: Icon(
+                  Icons.check,
+                  size: screenWidth * 0.15,
+                  color: Colors.white,
                 ),
               ),
-            ),
-          ],
+              SizedBox(height: screenHeight * 0.04),
+              Text(
+                'Verifikasi Berhasil!',
+                style: TextStyle(
+                  fontSize: screenWidth * 0.06,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              SizedBox(height: screenHeight * 0.1),
+              SizedBox(
+                width: double.infinity,
+                height: screenHeight * 0.065,
+                child: ElevatedButton(
+                  onPressed: onContinue,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFFFD700),
+                    foregroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Lanjutkan',
+                    style: TextStyle(
+                      fontSize: screenWidth * 0.04,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
